@@ -8,9 +8,11 @@ const openUploadForm = () => {
   uploadOverlay.classList.remove('hidden');
   body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
+  pristine.reset();
 };
 
 const closeUploadForm = () => {
+  pristine.reset();
   uploadFileInput.value = '';
   uploadForm.reset();
   uploadOverlay.classList.add('hidden');
