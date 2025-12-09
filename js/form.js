@@ -1,3 +1,7 @@
+import { initScale } from './scale.js';
+import { initEffects } from './effect.js';
+
+
 const MAX_HASHTAG_COUNT = 5;
 const VALID_HASHTAG_REGEX = /^#[a-zа-яё0-9]{1,19}$/i;
 const MAX_COMMENT_LENGTH = 140;
@@ -11,7 +15,8 @@ const hashtagInput = uploadForm.querySelector('.text__hashtags');
 const commentInput = uploadForm.querySelector('.text__description');
 
 let pristine;
-
+let resetScale;
+let resetEffects;
 
 const normalizeHashtags = (value) =>
   value.trim()
@@ -93,6 +98,10 @@ const closeUploadForm = () => {
   uploadOverlay.classList.add('hidden');
   body.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
+
+  // сброс модулей
+  if (resetScale) {resetScale();}
+  if (resetEffects) {resetEffects();}
 };
 
 const isTextFieldFocused = () =>
@@ -110,7 +119,12 @@ function onDocumentKeydown (evt) {
 
 uploadFileInput.addEventListener('change', () => {
   openUploadForm();
+
+  // запуск модулей редактирования изображения
+  resetScale = initScale(uploadForm);
+  resetEffects = initEffects(uploadForm);
 });
+
 
 uploadCancel.addEventListener('click', () => {
   closeUploadForm();
