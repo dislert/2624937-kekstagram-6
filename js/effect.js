@@ -55,7 +55,6 @@ const EFFECTS = {
   }
 };
 
-
 const initEffects = (uploadForm) => {
   const preview = uploadForm.querySelector('.img-upload__preview img');
   const effectLevelContainer = uploadForm.querySelector('.img-upload__effect-level');
@@ -65,8 +64,16 @@ const initEffects = (uploadForm) => {
 
   let currentEffect = 'none';
 
+  // скрываем уровень эффекта по умолчанию
   effectLevelContainer.classList.add('hidden');
 
+  // === 💥 ГЛАВНОЕ ИСПРАВЛЕНИЕ ===
+  // если слайдер уже существует — удаляем
+  if (effectLevelSlider.noUiSlider) {
+    effectLevelSlider.noUiSlider.destroy();
+  }
+
+  // создаём слайдер заново
   noUiSlider.create(effectLevelSlider, {
     range: { min: 0, max: 1 },
     start: 1,
@@ -74,14 +81,12 @@ const initEffects = (uploadForm) => {
     connect: 'lower'
   });
 
-  // обновление стиля при изменении ползунка
   effectLevelSlider.noUiSlider.on('update', () => {
     const value = effectLevelSlider.noUiSlider.get();
     effectValueField.value = value;
     EFFECTS[currentEffect].apply(preview, value);
   });
 
-  // при переключении эффекта
   effectsList.addEventListener('change', (evt) => {
     currentEffect = evt.target.value;
 
@@ -93,7 +98,6 @@ const initEffects = (uploadForm) => {
     }
 
     const cfg = EFFECTS[currentEffect];
-
     effectLevelContainer.classList.remove('hidden');
 
     effectLevelSlider.noUiSlider.updateOptions({
@@ -106,13 +110,16 @@ const initEffects = (uploadForm) => {
     cfg.apply(preview, cfg.start);
   });
 
-  // вернуть функцию сброса эффектов
+  // функция сброса (вызывается в closeUploadForm)
   return () => {
     currentEffect = 'none';
     effectLevelContainer.classList.add('hidden');
     preview.style.filter = '';
     effectValueField.value = '';
-    effectLevelSlider.noUiSlider.set(1);
+
+    if (effectLevelSlider.noUiSlider) {
+      effectLevelSlider.noUiSlider.set(1);
+    }
   };
 };
 
