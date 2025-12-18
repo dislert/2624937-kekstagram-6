@@ -1,3 +1,9 @@
-const getRandomInRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+const debounce = (callback, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback(...args), delay);
+  };
+};
 
-export {getRandomInRange};
+export { debounce };

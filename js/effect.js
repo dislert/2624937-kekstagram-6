@@ -64,16 +64,14 @@ const initEffects = (uploadForm) => {
 
   let currentEffect = 'none';
 
-  // скрываем уровень эффекта по умолчанию
+
   effectLevelContainer.classList.add('hidden');
 
-  // === 💥 ГЛАВНОЕ ИСПРАВЛЕНИЕ ===
-  // если слайдер уже существует — удаляем
+
   if (effectLevelSlider.noUiSlider) {
     effectLevelSlider.noUiSlider.destroy();
   }
 
-  // создаём слайдер заново
   noUiSlider.create(effectLevelSlider, {
     range: { min: 0, max: 1 },
     start: 1,
@@ -110,7 +108,7 @@ const initEffects = (uploadForm) => {
     cfg.apply(preview, cfg.start);
   });
 
-  // функция сброса (вызывается в closeUploadForm)
+
   return () => {
     currentEffect = 'none';
     effectLevelContainer.classList.add('hidden');

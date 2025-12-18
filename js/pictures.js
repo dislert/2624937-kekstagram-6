@@ -1,5 +1,6 @@
 import { getData } from './fetch.js';
 import { openBigPicture } from './fullscreen.js';
+import { initFilters } from './filters.js';
 
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const picturesContainer = document.querySelector('.pictures');
@@ -22,43 +23,48 @@ const createThumbnail = (photo) => {
   return thumbnail;
 };
 
+const clearThumbnails = () => {
+  picturesContainer.querySelectorAll('.picture').forEach((el) => el.remove());
+};
+
+const renderThumbnails = (photos) => {
+  clearThumbnails();
+  const fragment = document.createDocumentFragment();
+
+  photos.forEach((photo) => {
+    fragment.appendChild(createThumbnail(photo));
+  });
+
+  picturesContainer.appendChild(fragment);
+};
+
 const showErrorMessage = (message) => {
   const errorBlock = document.createElement('div');
   errorBlock.textContent = message;
-
-  errorBlock.style.position = 'fixed';
-  errorBlock.style.top = '20px';
-  errorBlock.style.left = '50%';
-  errorBlock.style.transform = 'translateX(-50%)';
-  errorBlock.style.padding = '15px 25px';
-  errorBlock.style.zIndex = '1000';
-  errorBlock.style.backgroundColor = 'red';
-  errorBlock.style.color = 'white';
-  errorBlock.style.fontSize = '18px';
-  errorBlock.style.borderRadius = '8px';
-  errorBlock.style.boxShadow = '0 0 10px rgba(0,0,0,0.4)';
-
+  errorBlock.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    z-index: 1000;
+    background-color: red;
+    color: white;
+    font-size: 18px;
+    border-radius: 8px;
+  `;
   document.body.append(errorBlock);
-
-  setTimeout(() => {
-    errorBlock.remove();
-  }, 4000);
+  setTimeout(() => errorBlock.remove(), 4000);
 };
 
-const renderThumbnails = async () => {
+const loadPictures = async () => {
   try {
     const photos = await getData();
-    const fragment = document.createDocumentFragment();
-
-    photos.forEach((photo) => {
-      fragment.appendChild(createThumbnail(photo));
-    });
-
-    picturesContainer.appendChild(fragment);
-
+    renderThumbnails(photos);
+    initFilters(photos, renderThumbnails);
   } catch (error) {
     showErrorMessage(`Ошибка загрузки данных: ${error.message}`);
   }
 };
 
-export { renderThumbnails };
+export { loadPictures, renderThumbnails };

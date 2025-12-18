@@ -1,5 +1,4 @@
-import {renderThumbnails} from './pictures.js';
+import { loadPictures } from './pictures.js';
 import './form.js';
 
-renderThumbnails();
-
+loadPictures();
