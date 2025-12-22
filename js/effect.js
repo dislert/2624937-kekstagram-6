@@ -64,28 +64,36 @@ const initEffects = (uploadForm) => {
 
   let currentEffect = 'none';
 
-
   effectLevelContainer.classList.add('hidden');
-
 
   if (effectLevelSlider.noUiSlider) {
     effectLevelSlider.noUiSlider.destroy();
   }
 
   noUiSlider.create(effectLevelSlider, {
-    range: { min: 0, max: 1 },
-    start: 1,
-    step: 0.1,
+    range: {
+      min: EFFECTS.none.min,
+      max: EFFECTS.none.max
+    },
+    start: EFFECTS.none.start,
+    step: EFFECTS.none.step,
     connect: 'lower'
   });
 
   effectLevelSlider.noUiSlider.on('update', () => {
-    const value = effectLevelSlider.noUiSlider.get();
+    const value = Number(effectLevelSlider.noUiSlider.get());
     effectValueField.value = value;
-    EFFECTS[currentEffect].apply(preview, value);
+
+    if (currentEffect !== 'none') {
+      EFFECTS[currentEffect].apply(preview, value);
+    }
   });
 
   effectsList.addEventListener('change', (evt) => {
+    if (!evt.target.matches('input[type="radio"]')) {
+      return;
+    }
+
     currentEffect = evt.target.value;
 
     if (currentEffect === 'none') {
@@ -96,18 +104,21 @@ const initEffects = (uploadForm) => {
     }
 
     const cfg = EFFECTS[currentEffect];
+
     effectLevelContainer.classList.remove('hidden');
 
     effectLevelSlider.noUiSlider.updateOptions({
-      range: { min: cfg.min, max: cfg.max },
-      start: cfg.start,
+      range: {
+        min: cfg.min,
+        max: cfg.max
+      },
       step: cfg.step
     });
 
+    effectLevelSlider.noUiSlider.set(cfg.start);
     effectValueField.value = cfg.start;
     cfg.apply(preview, cfg.start);
   });
-
 
   return () => {
     currentEffect = 'none';
@@ -116,7 +127,7 @@ const initEffects = (uploadForm) => {
     effectValueField.value = '';
 
     if (effectLevelSlider.noUiSlider) {
-      effectLevelSlider.noUiSlider.set(1);
+      effectLevelSlider.noUiSlider.set(EFFECTS.none.start);
     }
   };
 };

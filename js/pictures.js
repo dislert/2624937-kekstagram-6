@@ -40,7 +40,9 @@ const renderThumbnails = (photos) => {
 
 const showErrorMessage = (message) => {
   const errorBlock = document.createElement('div');
+  errorBlock.classList.add('data-error');
   errorBlock.textContent = message;
+
   errorBlock.style.cssText = `
     position: fixed;
     top: 20px;
@@ -53,9 +55,10 @@ const showErrorMessage = (message) => {
     font-size: 18px;
     border-radius: 8px;
   `;
+
   document.body.append(errorBlock);
-  setTimeout(() => errorBlock.remove(), 4000);
 };
+
 
 const loadPictures = async () => {
   try {
